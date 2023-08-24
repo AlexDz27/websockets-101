@@ -1,23 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
 
 function App() {
+  const [text, setText] = useState('')
+  function handleTextChange(e) {
+    setText(e.target.value)
+  }
+  const [text2, setText2] = useState('')
+
+  function handleSendMsg(e) {
+    if (e.key === 'Enter') {
+      window.socket.send(text)
+    }
+  }
+
+  useEffect(() => {
+    window.socket.onmessage = (e) => {
+      setText2(e.data)
+    }
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <textarea
+        value={text}
+        onChange={handleTextChange}
+        onKeyDown={handleSendMsg}
+       />
+      <textarea value={text2} readOnly />
     </div>
   );
 }
